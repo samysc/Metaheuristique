@@ -2,6 +2,7 @@ package jobshop.solvers;
 
 import jobshop.Instance;
 import jobshop.encodings.Schedule;
+import jobshop.solvers.neighborhood.*;
 
 import java.util.Optional;
 
@@ -23,9 +24,13 @@ public interface Solver {
             case "basic": return new BasicSolver();
             case "spt": return new GreedySolver(GreedySolver.Priority.SPT);
             case "lrpt": return new GreedySolver(GreedySolver.Priority.LRPT);
+            case "descent-spt": return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.SPT));
+            case "descent-estspt": return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.EST_SPT));
+            case "descent-lrpt": return new DescentSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.LRPT));
+            case "taboo-spt": return new TabooSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.SPT), 20, 20);
+            case "taboo-lrpt": return new TabooSolver(new Nowicki(), new GreedySolver(GreedySolver.Priority.LRPT), 20, 20);
             // TODO: add new solvers
             default: throw new RuntimeException("Unknown solver: "+ name);
         }
     }
-
 }

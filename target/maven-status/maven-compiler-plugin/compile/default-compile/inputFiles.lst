@@ -1,0 +1,14 @@
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/encodings/Schedule.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/BasicSolver.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/encodings/ResourceOrder.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/neighborhood/Neighborhood.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/neighborhood/Nowicki.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/BestKnownResults.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/DescentSolver.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/GreedySolver.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/encodings/Encoding.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/TabooSolver.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/encodings/Task.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/Instance.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/solvers/Solver.java
+/home/idriss/TP-MH/Metaheuristique/src/main/java/jobshop/Main.java

@@ -12,10 +12,10 @@ public final class ResourceOrder extends Encoding {
 
     // for each machine m, taskByMachine[m] is an array of tasks to be
     // executed on this machine in the same order
-    final Task[][] tasksByMachine;
+    public final Task[][] tasksByMachine;
 
     // for each machine, indicate how many tasks have been initialized
-    final int[] nextFreeSlot;
+    public final int[] nextFreeSlot;
 
     /** Creates a new empty resource order. */
     public ResourceOrder(Instance instance)
@@ -92,7 +92,19 @@ public final class ResourceOrder extends Encoding {
         tasksByMachine[machine][indexTask1] = tasksByMachine[machine][indexTask2];
         tasksByMachine[machine][indexTask2] = tmp;
     }
-
+    public int getIndexOnMachine(Task t,int machine){
+        int index = -1;
+        for(int i = 0;i<this.instance.numJobs;i++){
+            if(t.equals(this.tasksByMachine[machine][i])){
+                index = i;
+                break;
+            }
+        }
+        if(index == -1){
+            System.out.println("La tâche n'a pas été trouvée dans la matrice");
+        }
+        return index;
+    }
     @Override
     public Optional<Schedule> toSchedule() {
         // indicates, for each task that have been scheduled, its start time

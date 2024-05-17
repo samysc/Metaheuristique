@@ -1,11 +1,15 @@
 package jobshop.solvers.neighborhood;
 
 import jobshop.encodings.ResourceOrder;
+import jobshop.encodings.Task;
+import jobshop.encodings.Schedule;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import java.util.HashMap;
 
 /** Implementation of the Nowicki and Smutnicki neighborhood.
  *
@@ -32,15 +36,19 @@ public class Nowicki extends Neighborhood {
         /** machine on which the block is identified */
         public final int machine;
         /** index of the first task of the block */
-        public final int firstTask;
+        public int firstTask;
         /** index of the last task of the block */
-        public final int lastTask;
+        public int lastTask;
 
         /** Creates a new block. */
         Block(int machine, int firstTask, int lastTask) {
             this.machine = machine;
             this.firstTask = firstTask;
             this.lastTask = lastTask;
+        }
+        public int setLastTask(int id) {
+            this.lastTask = id;
+            return 0;
         }
     }
 
@@ -87,7 +95,9 @@ public class Nowicki extends Neighborhood {
          *  The original ResourceOrder MUST NOT be modified by this operation.
          */
         public ResourceOrder generateFrom(ResourceOrder original) {
-            throw new UnsupportedOperationException();
+            ResourceOrder R0 = original.copy();
+            R0.swapTasks(machine, t1, t2);
+            return R0;
         }
 
         @Override
@@ -125,13 +135,68 @@ public class Nowicki extends Neighborhood {
     }
 
     /** Returns a list of all the blocks of the critical path. */
-    List<Block> blocksOfCriticalPath(ResourceOrder order) {
-        throw new UnsupportedOperationException();
+   public List<Block> blocksOfCriticalPath(ResourceOrder order) {
+    Schedule schedule = order.toSchedule().get();
+    List<Task> criticalPath = schedule.criticalPath();
+    List<Block> listOfBlocks = new ArrayList<>();
+
+    if (order.toSchedule().isEmpty() || criticalPath.isEmpty()) {
+        return listOfBlocks; // Return empty list if schedule conversion is not possible
+    }
+
+    Task previousTask = criticalPath.get(0);
+    int currentMachine = schedule.instance.machine(previousTask);
+    int firstIndex = findTaskIndex(order.tasksByMachine[currentMachine], previousTask);
+    int lastIndex = firstIndex;
+
+    for (int i = 1; i < criticalPath.size(); i++) {
+        Task currentTask = criticalPath.get(i);
+        int machine = schedule.instance.machine(currentTask);
+
+        if (machine == currentMachine) {
+            lastIndex = findTaskIndex(order.tasksByMachine[machine], currentTask);
+        } else {
+            if (lastIndex > firstIndex) { // Add block if it has more than one task
+                listOfBlocks.add(new Block(currentMachine, firstIndex, lastIndex));
+            }
+            currentMachine = machine;
+            firstIndex = findTaskIndex(order.tasksByMachine[machine], currentTask);
+            lastIndex = firstIndex;
+        }
+    }
+    if (lastIndex > firstIndex) {
+        listOfBlocks.add(new Block(currentMachine, firstIndex, lastIndex));
+    }
+
+    return listOfBlocks;
+}
+
+    private int findTaskIndex(Task[] tasks, Task target) {
+        for (int i = 0; i < tasks.length; i++) {
+            if (tasks[i].equals(target)) {
+                return i;
+            }
+        }
+        return -1; // Return -1 if the task is not found, should handle this case if it can happen
     }
 
     /** For a given block, return the possible swaps for the Nowicki and Smutnicki neighborhood */
     List<Swap> neighbors(Block block) {
-        throw new UnsupportedOperationException();
+        ArrayList<Swap> listOfSwaps = new ArrayList<Swap>();
+        boolean hasNeighbors = false;
+        if (block.lastTask == block.firstTask+1) { // si la première et la deniere task du block son consecutives
+            hasNeighbors = true; // il possèdes 2 voisins
+        }
+        if (hasNeighbors) { //s'il possède 2 voisins, 
+            Swap s = new Swap(block.machine, block.firstTask, block.lastTask); // on crée le swap correspondant
+            listOfSwaps.add(s); //on ajoute le swap à la liste des swaps
+        } else { // sinon, il contient plus de 2 voisins
+            Swap s1 = new Swap(block.machine, block.firstTask, block.firstTask+1); // on ajoute le swap correspondant aux 2 premières tasks
+            Swap s2 = new Swap(block.machine, block.lastTask, block.lastTask-1); // on ajoute le swap correspondant aux 2 dernières tasks
+            listOfSwaps.add(s1);
+            listOfSwaps.add(s2);
+        }
+        return listOfSwaps;
     }
 
 }
